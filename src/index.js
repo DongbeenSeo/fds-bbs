@@ -3,11 +3,19 @@ import axios from 'axios'
 //axios instance를 정의
 const rootEl = document.querySelector('.root')
 const postAPI = axios.create({})
-    //localStorage에 저장되어있는 token을 사용해서 로그인을 유지할 수 있도록(요청에 header가 포함되도록)
-if (localStorage.getItem('token')) {
-    postAPI.defaults.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+
+//1. ID password가 입력되었을 때
+//2. login 상태를 유지 시켜주는
+function login(token) {
+    localStorage.setItem('token', token);
+    postAPI.defaults.headers['Authorizaion'] = `Bearer ${token}`;
     rootEl.classList.add('root--authed');
-    //classList에는 . 사용 X
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    delete postAPI.defaults.headers['Authorization'];
+    rootEl.classList.remove('root--authed');
 }
 
 const templates = {
@@ -35,9 +43,7 @@ async function indexPage() {
         postFormPage();
     })
     listFragment.querySelector('.post-list__logout-btn').addEventListener('click', e => {
-            localStorage.removeItem('token');
-            delete postAPI.defaults.headers['Authorization'];
-            rootEl.classList.remove('root--authed');
+            logout();
         })
         //logout 기능 localstorage있는 token을 지우고, axios instance의 Authorization을 제거
 
@@ -81,9 +87,7 @@ async function loginPage() {
         };
         e.preventDefault();
         const res = await postAPI.post('http://localhost:3000/users/login', payload)
-        localStorage.setItem('token', res.data.token);
-        postAPI.defaults.headers['Authorizaion'] = `Bearer ${res.data.token}`;
-        rootEl.classList.add('root--authed');
+        login(res.data.token);
         indexPage();
     })
 
@@ -113,3 +117,9 @@ async function postFormPage() {
 }
 
 indexPage();
+
+//localStorage에 저장되어있는 token을 사용해서 로그인을 유지할 수 있도록(요청에 header가 포함되도록)
+if (localStorage.getItem('token')) {
+    //classList에는 . 사용 X
+    login(localStorage.getItem('token'));
+}
