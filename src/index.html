@@ -52,13 +52,23 @@
       <form class="post-form">
         <h1 class="post-form__header">새 글 쓰기</h1>
         <input name="title" type="title" class="post-form__title">
-        <textarea name="body" class="psot-form__body"></textarea>
+        <textarea name="body" class="post-form__body"></textarea>
         <button class="post-form__btn-submit">전송</button>
         <button class="post-form__btn-back">뒤로</button>
       </form>
     </template>
-    <script src="./index.js"></script>
 
+    <template id="edit-form">
+      <form class="edit-form">
+        <h1 class="edit-form__header">수정하기</h1>
+        <input name="title" type="title" class="edit-form__title">
+        <textarea name="body" class="edit-form__body"></textarea>
+        <button class="edit-form__btn-edit">수정</button>
+        <button class="edit-form__btn-back">취소</button>
+      </form>
+    </template>
+
+    <script src="./index.js"></script>
 </body>
 
 </html>

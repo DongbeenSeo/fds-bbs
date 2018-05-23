@@ -27,6 +27,16 @@ body {
 // .root--authed .post-list__logout-btn {
 //     display: inline-block;
 // }
+.post-content {
+    &__btn-modify,
+    &__btn-delete {
+        display: none;
+        .root--authed & {
+            display: inline-block;
+        }
+    }
+}
+
 .post-form {
     &__title {
         display: block;

@@ -25,7 +25,8 @@ const templates = {
     postItem: document.querySelector('#post-item').content,
     postContent: document.querySelector('#post-content').content,
     login: document.querySelector('#login').content,
-    postForm: document.querySelector('#post-form').content
+    postForm: document.querySelector('#post-form').content,
+    editForm: document.querySelector('#edit-form').content
 };
 
 function render(fragment) {
@@ -74,7 +75,7 @@ async function postContentPage(postID) {
         indexPage();
     });
     fragment.querySelector('.post-content__btn-modify').addEventListener('click', async e => {
-
+        editPage(postID);
     })
     fragment.querySelector('.post-content__btn-delete').addEventListener('click', async e => {
         e.preventDefault();
@@ -128,8 +129,30 @@ async function postFormPage() {
     render(fragment);
 }
 
-async function modifyPage() {
+async function editPage(postID) {
+    const editfragment = document.importNode(templates.editForm, true);
+    //editPage가 렌더링 되면 기본값으로 넘겨 주기 위한 code
+    const res = await postAPI.get(`/posts/${postID}`);
+    console.log(res.data.title);
+    console.log(res.data.body);
+    editfragment.querySelector('.edit-form__title').value = `${res.data.title}`;
+    editfragment.querySelector('.edit-form__body').value = `${res.data.body}`;
 
+    editfragment.querySelector('.edit-form').addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const payload = {
+            title: e.target.elements.title.value,
+            body: e.target.elements.body.value
+        }
+        const res = await postAPI.patch(`/posts/${postID}`, payload);
+        postContentPage(postID);
+    })
+    editfragment.querySelector('.edit-form__btn-back').addEventListener('click', e => {
+        e.preventDefault();
+        postContentPage(postID);
+    })
+    render(editfragment);
 }
 
 //localStorage에 저장되어있는 token을 사용해서 로그인을 유지할 수 있도록(요청에 header가 포함되도록)
