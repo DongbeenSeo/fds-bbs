@@ -1,16 +1,16 @@
 import axios from 'axios'
 
 //axios instance를 정의
-const rootEl = document.querySelector('.root')
 const postAPI = axios.create({
-    baseURL: 'http://localhost:3000'
+    baseURL: process.env.API_URL
 })
+const rootEl = document.querySelector('.root')
 
 //1. ID password가 입력되었을 때
 //2. login 상태를 유지 시켜주는
 function login(token) {
     localStorage.setItem('token', token);
-    postAPI.defaults.headers['Authorizaion'] = `Bearer ${token}`;
+    postAPI.defaults.headers['Authorization'] = `Bearer ${token}`;
     rootEl.classList.add('root--authed');
 }
 
@@ -46,6 +46,7 @@ async function indexPage() {
     })
     listFragment.querySelector('.post-list__logout-btn').addEventListener('click', e => {
             logout();
+            indexPage();
         })
         //logout 기능 localstorage있는 token을 지우고, axios instance의 Authorization을 제거
 
@@ -67,11 +68,19 @@ async function postContentPage(postID) {
     const res = await postAPI.get(`/posts/${postID}`)
     const fragment = document.importNode(templates.postContent, true);
 
-    fragment.querySelector('.post-content__title').textContent = `제목: ${res.data.title}`;
-    fragment.querySelector('.post-content__body').textContent = `내용: ${res.data.body}`;
+    fragment.querySelector('.post-content__title').textContent = res.data.title;
+    fragment.querySelector('.post-content__body').textContent = res.data.body;
     fragment.querySelector('.post-content__btn-back').addEventListener('click', e => {
         indexPage();
+    });
+    fragment.querySelector('.post-content__btn-modify').addEventListener('click', async e => {
+
     })
+    fragment.querySelector('.post-content__btn-delete').addEventListener('click', async e => {
+        e.preventDefault();
+        const res = await postAPI.delete(`/posts/${postID}`);
+        indexPage();
+    });
     render(fragment);
 }
 
@@ -109,7 +118,8 @@ async function postFormPage() {
             body: e.target.elements.body.value
         }
         const res = await postAPI.post('/posts', payload);
-        postContentPage(res.data.id);
+        // postContentPage(res.data.id);
+        indexPage()
     })
     fragment.querySelector('.post-form__btn-back').addEventListener('click', e => {
         e.preventDefault();
@@ -118,10 +128,13 @@ async function postFormPage() {
     render(fragment);
 }
 
-indexPage();
+async function modifyPage() {
+
+}
 
 //localStorage에 저장되어있는 token을 사용해서 로그인을 유지할 수 있도록(요청에 header가 포함되도록)
 if (localStorage.getItem('token')) {
     //classList에는 . 사용 X
     login(localStorage.getItem('token'));
 }
+indexPage();
