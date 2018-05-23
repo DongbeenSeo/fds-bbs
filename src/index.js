@@ -6,7 +6,8 @@ const templates = {
     postItem: document.querySelector('#post-item').content
 }
 
-axios.get('http://localhost:3000/posts').then(res => {
+async function indexPage() {
+    const res = await axios.get('http://localhost:3000/posts');
     const listFragment = document.importNode(templates.postList, true);
     res.data.forEach(post => {
         const fragment = document.importNode(templates.postItem, true);
@@ -16,4 +17,6 @@ axios.get('http://localhost:3000/posts').then(res => {
     })
 
     rootEl.appendChild(listFragment);
-})
+}
+
+indexPage();
