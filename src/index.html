@@ -15,6 +15,7 @@
 
     <template id="post-list">
       <h1>게시글 목록</h1>
+      <button class="post-list__login-btn">로그인</button>
       <div class="post-list"></div>
 
     </template>
@@ -29,9 +30,18 @@
         <p class="post-content__body"></p>
         <button class="post-content__btn-back">뒤로</button>
       </div>
-
     </template>
 
+    <template id="login">
+      <div class="login">
+        <h1 class="login__title">로그인</h1>
+        <form class="login__form">
+          <input name="username" type="text" class="login__username">
+          <input name="password" type="password" class="login__password">
+          <button type="submit">전송</button>
+        </form>
+      </div>
+    </template>
     <script src="./index.js"></script>
 
 </body>
