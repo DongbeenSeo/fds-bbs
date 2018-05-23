@@ -4,7 +4,7 @@ import axios from 'axios'
 const postAPI = axios.create({})
     //localStorage에 저장되어있는 token을 사용해서 로그인을 유지할 수 있도록(요청에 header가 포함되도록)
 if (localStorage.getItem('token')) {
-    postAPI.defaults.headers['Authorization'] = localStorage.getItem('token');
+    postAPI.defaults.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 }
 
 
@@ -76,7 +76,7 @@ async function loginPage() {
         e.preventDefault();
         const res = await postAPI.post('http://localhost:3000/users/login', payload)
         localStorage.setItem('token', res.data.token);
-        postAPI.defaults.headers['Authorizaion'] = res.data.token;
+        postAPI.defaults.headers['Authorizaion'] = `Bearer ${res.data.token}`;
         indexPage();
     })
 
