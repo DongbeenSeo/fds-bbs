@@ -12,7 +12,8 @@ body {
             display: none;
         }
     }
-    &__logout-btn {
+    &__logout-btn,
+    &__new-post-btn {
         display: none;
         .root--authed & {
             display: inline-block;
@@ -26,3 +27,14 @@ body {
 // .root--authed .post-list__logout-btn {
 //     display: inline-block;
 // }
+.post-form {
+    &__title {
+        display: block;
+        margin-bottom: 10px;
+        width: 100px;
+    }
+    &__body {
+        width: 100px;
+        display: block;
+    }
+}

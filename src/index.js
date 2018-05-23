@@ -14,7 +14,8 @@ const templates = {
     postList: document.querySelector('#post-list').content,
     postItem: document.querySelector('#post-item').content,
     postContent: document.querySelector('#post-content').content,
-    login: document.querySelector('#login').content
+    login: document.querySelector('#login').content,
+    postForm: document.querySelector('#post-form').content
 };
 
 function render(fragment) {
@@ -29,6 +30,9 @@ async function indexPage() {
 
     listFragment.querySelector('.post-list__login-btn').addEventListener('click', e => {
         loginPage();
+    })
+    listFragment.querySelector('.post-list__new-post-btn').addEventListener('click', e => {
+        postFormPage();
     })
     listFragment.querySelector('.post-list__logout-btn').addEventListener('click', e => {
             localStorage.removeItem('token');
@@ -50,6 +54,7 @@ async function indexPage() {
     render(listFragment);
 }
 
+//제목 클릭하면 내용을 보여주는 함수
 async function postContentPage(postID) {
     const res = await postAPI.get(`http://localhost:3000/posts/${postID}`)
     const fragment = document.importNode(templates.postContent, true);
@@ -62,7 +67,7 @@ async function postContentPage(postID) {
     render(fragment);
 }
 
-
+//로그인 페이지 렌더링 함수
 async function loginPage() {
     const fragment = document.importNode(templates.login, true);
     const formEl = fragment.querySelector('.login__form');
@@ -84,4 +89,27 @@ async function loginPage() {
 
     render(fragment);
 }
+
+
+//글쓰기 페이지 렌더링 함수 
+async function postFormPage() {
+    const fragment = document.importNode(templates.postForm, true);
+    const formEl = fragment.querySelector('.post-form');
+
+    fragment.querySelector('.post-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const payload = {
+            title: e.target.elements.title.value,
+            body: e.target.elements.body.value
+        }
+        const res = await postAPI.post('http://localhost:3000/posts', payload);
+        postContentPage(res.data.id);
+    })
+    fragment.querySelector('.post-form__btn-back').addEventListener('click', e => {
+        e.preventDefault();
+        indexPage();
+    })
+    render(fragment);
+}
+
 indexPage();
