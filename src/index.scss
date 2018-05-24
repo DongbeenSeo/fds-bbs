@@ -22,7 +22,7 @@ body {
 }
 
 .post-content {
-    &__btn-modify,
+    &__btn-edit,
     &__btn-delete {
         display: none;
         .root--authed & {
