@@ -37,7 +37,10 @@ function render(fragment) {
 
 //fragment안에는 template tag안의 element가 저장되어있다.
 async function indexPage() {
+    rootEl.classList.add('root--loading');
     const res = await postAPI.get('/posts?_expand=user');
+    rootEl.classList.remove('root--loading');
+
     const listFragment = document.importNode(templates.postList, true);
 
     listFragment.querySelector('.post-list__login-btn').addEventListener('click', e => {
