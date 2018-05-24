@@ -37,7 +37,7 @@ function render(fragment) {
 
 //fragment안에는 template tag안의 element가 저장되어있다.
 async function indexPage() {
-    const res = await postAPI.get('/posts');
+    const res = await postAPI.get('/posts?_expand=user');
     const listFragment = document.importNode(templates.postList, true);
 
     listFragment.querySelector('.post-list__login-btn').addEventListener('click', e => {
@@ -47,14 +47,17 @@ async function indexPage() {
         postFormPage();
     })
     listFragment.querySelector('.post-list__logout-btn').addEventListener('click', e => {
-            logout();
-            indexPage();
-        })
-        //logout 기능 localstorage있는 token을 지우고, axios instance의 Authorization을 제거
+        logout();
+        indexPage();
+    });
+    //logout 기능 localstorage있는 token을 지우고, axios instance의 Authorization을 제거
 
     res.data.forEach(post => {
         const fragment = document.importNode(templates.postItem, true);
+        fragment.querySelector('.post-item__author').textContent = `작성자 ${post.user.username}`
         const pEl = fragment.querySelector('.post-item__title');
+
+
         pEl.textContent = post.title;
         pEl.addEventListener('click', e => {
             postContentPage(post.id);
