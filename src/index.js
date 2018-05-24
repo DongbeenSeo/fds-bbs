@@ -25,7 +25,9 @@ const templates = {
     postItem: document.querySelector('#post-item').content,
     postContent: document.querySelector('#post-content').content,
     login: document.querySelector('#login').content,
-    postForm: document.querySelector('#post-form').content
+    postForm: document.querySelector('#post-form').content,
+    comments: document.querySelector('#comments').content,
+    commentItem: document.querySelector('#comment-item').content
 };
 
 function render(fragment) {
@@ -73,14 +75,17 @@ async function postContentPage(postID) {
     fragment.querySelector('.post-content__btn-back').addEventListener('click', e => {
         indexPage();
     });
-    fragment.querySelector('.post-content__btn-modify').addEventListener('click', async e => {
-
-    })
-    fragment.querySelector('.post-content__btn-delete').addEventListener('click', async e => {
-        e.preventDefault();
-        const res = await postAPI.delete(`/posts/${postID}`);
-        indexPage();
-    });
+    //로그인을 하면 댓글이 보이고 로그아웃상태이면 댓글을 볼수 없도록
+    if (localStorage.getItem('token')) {
+        const commentsFragment = document.importNode(templates.comments, true);
+        const commentsRes = await postAPI.get(`/posts/${postID}/comments`);
+        commentsRes.data.forEach(comment => {
+            const itemFragment = document.importNode(templates.commentItem, true);
+            itemFragment.querySelector('.comment-item__body').textContent = comment.body;
+            commentsFragment.querySelector('.comments__list').appendChild(itemFragment);
+        })
+        fragment.appendChild(commentsFragment);
+    }
     render(fragment);
 }
 
@@ -128,9 +133,7 @@ async function postFormPage() {
     render(fragment);
 }
 
-async function modifyPage() {
 
-}
 
 //localStorage에 저장되어있는 token을 사용해서 로그인을 유지할 수 있도록(요청에 header가 포함되도록)
 if (localStorage.getItem('token')) {
