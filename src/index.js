@@ -27,7 +27,8 @@ const templates = {
     login: document.querySelector('#login').content,
     postForm: document.querySelector('#post-form').content,
     comments: document.querySelector('#comments').content,
-    commentItem: document.querySelector('#comment-item').content
+    commentItem: document.querySelector('#comment-item').content,
+    editForm: document.querySelector('#edit-form').content
 };
 
 function render(fragment) {
@@ -81,6 +82,14 @@ async function postContentPage(postID) {
     fragment.querySelector('.post-content__title').textContent = res.data.title;
     fragment.querySelector('.post-content__body').textContent = res.data.body;
     fragment.querySelector('.post-content__btn-back').addEventListener('click', e => {
+        indexPage();
+    });
+    fragment.querySelector('.post-content__btn-edit').addEventListener('click', async e => {
+        editPage(postID);
+    });
+    fragment.querySelector('.post-content__btn-delete').addEventListener('click', async e => {
+        e.preventDefault();
+        const res = await postAPI.delete(`/posts/${postID}`);
         indexPage();
     });
     //로그인을 하면 댓글이 보이고 로그아웃상태이면 댓글을 볼수 없도록
@@ -171,7 +180,30 @@ async function postFormPage() {
     })
     render(fragment);
 }
+async function editPage(postID) {
+    const editfragment = document.importNode(templates.editForm, true);
+    //editPage가 렌더링 되면 기본값으로 넘겨 주기 위한 code
+    const res = await postAPI.get(`/posts/${postID}`);
 
+    editfragment.querySelector('.edit-form__title').value = `${res.data.title}`;
+    editfragment.querySelector('.edit-form__body').value = `${res.data.body}`;
+
+    editfragment.querySelector('.edit-form').addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const payload = {
+            title: e.target.elements.title.value,
+            body: e.target.elements.body.value
+        }
+        const res = await postAPI.patch(`/posts/${postID}`, payload);
+        postContentPage(postID);
+    })
+    editfragment.querySelector('.edit-form__btn-back').addEventListener('click', e => {
+        e.preventDefault();
+        postContentPage(postID);
+    })
+    render(editfragment);
+}
 
 
 //localStorage에 저장되어있는 token을 사용해서 로그인을 유지할 수 있도록(요청에 header가 포함되도록)

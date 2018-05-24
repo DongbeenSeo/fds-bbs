@@ -21,6 +21,16 @@ body {
     }
 }
 
+.post-content {
+    &__btn-modify,
+    &__btn-delete {
+        display: none;
+        .root--authed & {
+            display: inline-block;
+        }
+    }
+}
+
 // .post-list__logout-btn {
 //     display: none;
 // }
