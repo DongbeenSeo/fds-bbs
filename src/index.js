@@ -73,7 +73,9 @@ async function indexPage() {
 
 //제목 클릭하면 내용을 보여주는 함수
 async function postContentPage(postID) {
-    const res = await postAPI.get(`/posts/${postID}`)
+    rootEl.classList.add('root--loading');
+    const res = await postAPI.get(`/posts/${postID}`);
+    rootEl.classList.remove('root--loading');
     const fragment = document.importNode(templates.postContent, true);
 
     fragment.querySelector('.post-content__title').textContent = res.data.title;
@@ -84,22 +86,30 @@ async function postContentPage(postID) {
     //로그인을 하면 댓글이 보이고 로그아웃상태이면 댓글을 볼수 없도록
     if (localStorage.getItem('token')) {
         const commentsFragment = document.importNode(templates.comments, true);
+        rootEl.classList.add('root--loading');
         const commentsRes = await postAPI.get(`/posts/${postID}/comments`);
+        rootEl.classList.remove('root--loading');
         commentsRes.data.forEach(comment => {
             const itemFragment = document.importNode(templates.commentItem, true);
             itemFragment.querySelector('.comment-item__body').textContent = comment.body;
             commentsFragment.querySelector('.comments__list').appendChild(itemFragment);
         })
         const formEl = commentsFragment.querySelector('.comments__form');
+        rootEl.classList.add('root--loading');
         formEl.addEventListener('submit', async e => {
             e.preventDefault();
             const payload = {
                 body: e.target.elements.body.value
             };
+            rootEl.classList.add('root--loading');
+            rootEl.classList.add('root--loading');
             const res = await postAPI.post(`/posts/${postID}/comments`, payload);
+            rootEl.classList.remove('root--loading');
+            rootEl.classList.remove('root--loading');
             postContentPage(postID);
         })
         fragment.appendChild(commentsFragment);
+        rootEl.classList.remove('root--loading');
     }
     render(fragment);
 }
@@ -108,7 +118,7 @@ async function postContentPage(postID) {
 async function loginPage() {
     const fragment = document.importNode(templates.login, true);
     const formEl = fragment.querySelector('.login__form');
-
+    rootEl.classList.add('root--loading');
     formEl.addEventListener('submit', async e => {
         const payload = {
             //e.target에는 formEl이 포함
@@ -117,10 +127,13 @@ async function loginPage() {
             password: e.target.elements.password.value
         };
         e.preventDefault();
+        rootEl.classList.add('root--loading');
         const res = await postAPI.post('/users/login', payload)
+        rootEl.classList.remove('root--loading');
         login(res.data.token);
         indexPage();
     })
+    rootEl.classList.remove('root--loading');
 
     render(fragment);
 }
