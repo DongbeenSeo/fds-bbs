@@ -91,7 +91,18 @@ async function postContentPage(postID) {
         rootEl.classList.remove('root--loading');
         commentsRes.data.forEach(comment => {
             const itemFragment = document.importNode(templates.commentItem, true);
-            itemFragment.querySelector('.comment-item__body').textContent = comment.body;
+            const bodyEl = itemFragment.querySelector('.comment-item__body');
+            const removeButtonEl = itemFragment.querySelector('.comment-item__remove-btn');
+            bodyEl.textContent = comment.body;
+            //낙관적 업데이트, 문서를 수정하고 통신을 추가
+            removeButtonEl.addEventListener('click', async e => {
+                //p tag와 btn tag 삭제
+                bodyEl.remove();
+                removeButtonEl.remove();
+                //delete요청 보내기
+                const res = await postAPI.delete(`/comments/${comment.id}`);
+                //요청이 실패 했을 경우 복구(생략)
+            })
             commentsFragment.querySelector('.comments__list').appendChild(itemFragment);
         })
         const formEl = commentsFragment.querySelector('.comments__form');
