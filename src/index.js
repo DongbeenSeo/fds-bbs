@@ -39,11 +39,7 @@ function render(fragment) {
 async function indexPage() {
     rootEl.classList.add('root--loading');
     const res = await postAPI.get('/posts?_expand=user');
-<<<<<<< HEAD
     rootEl.classList.remove('root--loading');
-=======
-    rootEl.classList.add('root--loading');
->>>>>>> 6971c3073ad16aa0a89f22df03b9e4b1136ad97b
 
     const listFragment = document.importNode(templates.postList, true);
 
